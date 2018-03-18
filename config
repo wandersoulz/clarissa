@@ -1,0 +1,15 @@
+major_distributions:
+    comp_sci: -10, 10
+    marketing: -10, 10
+    astophysics: -10, 10
+    visual_arts: -10, 10
+    biology: -10, 10
+friendship_distribution:
+    friendship: -30,30
+scalar_distribution:
+    scale_friendship: 1.0003, 0.01
+    fudge_factor: 0.6, 0.01
+place_distribution:
+    area_num_people: 1, 4, 10
+    work_num_people: 15, 17, 30
+    random_encounter: 1, 10
