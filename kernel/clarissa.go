@@ -27,7 +27,7 @@ var scalarDist *godes.NormalDistr
 // Run - Clarissa's run method
 func (c *Clarissa) Run() {
 	simTime := godes.GetSimulationTime()
-	if godes.GetDay() == 366 {
+	if godes.GetDay() >= 366 {
 		return
 	}
 	if simTime.Hour < 6 {
