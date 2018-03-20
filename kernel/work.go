@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"fmt"
@@ -12,6 +12,8 @@ type Work struct {
 	people  []Friend
 	workEnd float64
 }
+
+var work *Work
 
 func (w *Work) Run() {
 	for godes.GetHour() < w.workEnd {
@@ -33,15 +35,17 @@ func (w *Work) Run() {
 
 		}
 	}
-	godes.AddRunner(InitArea("Bus", "Home", w.c))
+	godes.AddRunner(InitBus("Home", w.c))
 }
 
-func InitWork(c *Clarissa) *Work {
-	w := &Work{
-		&godes.Runner{},
-		c,
-		createChums(),
-		18,
+func GetWork(c *Clarissa) *Work {
+	if work == nil {
+		work = &Work{
+			&godes.Runner{},
+			c,
+			createChums(),
+			18,
+		}
 	}
-	return w
+	return work
 }

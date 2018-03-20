@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"fmt"
@@ -13,6 +13,8 @@ type School struct {
 	people    []Friend
 	schoolEnd float64
 }
+
+var school *School
 
 func (s *School) Run() {
 	for godes.GetHour() < s.schoolEnd {
@@ -34,17 +36,20 @@ func (s *School) Run() {
 
 		}
 	}
-	godes.AddRunner(InitArea("Bus", "Work", s.c))
+	godes.AddRunner(InitBus("Work", s.c))
 }
 
-func InitSchool(c *Clarissa) *School {
-	s := &School{
-		&godes.Runner{},
-		c,
-		createChums(),
-		14,
+func GetSchool(c *Clarissa) *School {
+	if school == nil {
+		school = &School{
+			&godes.Runner{},
+			c,
+			createChums(),
+			14,
+		}
 	}
-	return s
+
+	return school
 }
 
 func createChums() []Friend {

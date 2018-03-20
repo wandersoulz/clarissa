@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ var num_people_dist *godes.TriangularDistr
 var random_encounter *godes.UniformDistr
 var random_time *godes.TriangularDistr
 
-func InitAreaDists() {
+func InitBusDists() {
 	people_index_dist = godes.NewUniformDistr(true)
 	num_people_dist = godes.NewTriangularDistr(true)
 	random_encounter = godes.NewUniformDistr(true)
@@ -20,55 +20,51 @@ func InitAreaDists() {
 }
 
 // Area - place for Clarissa to interact with people
-type Area struct {
+type Bus struct {
 	*godes.Runner
 	c           *Clarissa
-	name        string
 	destination string
 	people      []Friend
-	timeInArea  float64
+	timeOnBus   float64
 }
 
-func (a *Area) Run() {
+func (b *Bus) Run() {
 	// Get a random encounter
 	encounter := random_encounter.Get(0, 10)
-	fmt.Printf("Clarissa is at %s on her way to %s\n", a.name, a.destination)
+	fmt.Printf("Clarissa is on the bus on her way to %s\n", b.destination)
 	if encounter < 5 {
 		// we have an encounter
-		personIndex := int(people_index_dist.Get(0, float64(len(a.people))))
-		person := a.people[personIndex]
+		personIndex := int(people_index_dist.Get(0, float64(len(b.people))))
+		person := b.people[personIndex]
 
-		friend, isNew := a.c.MakeFriend(&person)
+		friend, isNew := b.c.MakeFriend(&person)
 		if isNew {
-			fmt.Printf("Clarissa met %s while on/at the %s\n", person.name, a.name)
+			fmt.Printf("Clarissa met %s while on the bus\n", person.name)
 		} else {
-			fmt.Printf("Clarissa talked to %s on/at the %s\n", person.name, a.name)
+			fmt.Printf("Clarissa talked to %s on the bus\n", person.name)
 		}
-		a.c.GetInfluence(friend)
+		b.c.GetInfluence(friend)
 	}
-	for godes.GetHour() < 7 && a.destination == "School" {
-		godes.Advance(a.timeInArea)
-	}
-	if godes.GetHour() >= 7 && a.destination == "School" {
+
+	godes.Advance(b.timeOnBus)
+
+	if b.destination == "School" {
 		// AT SCHOOL, LEARN CLARISSA, LEARN
-		godes.AddRunner(InitSchool(a.c))
-	} else if godes.GetHour() >= 13 && a.destination == "Work" {
+		godes.AddRunner(GetSchool(b.c))
+	} else if b.destination == "Work" {
 		// Go to work Clarissa
-		godes.AddRunner(InitWork(a.c))
-	} else if godes.GetHour() >= 18 && a.destination == "Home" {
+		godes.AddRunner(GetWork(b.c))
+	} else if b.destination == "Home" {
 		// Go home Clarissa
-		godes.AddRunner(InitHome(a.c))
-	} else {
-		godes.Advance(a.timeInArea)
+		godes.AddRunner(InitHome(b.c))
 	}
 }
 
-// InitArea - Initialize the area with a random set of people
-func InitArea(name, destination string, c *Clarissa) *Area {
-	a := Area{
+// InitBus - Initialize the bus with a random set of people
+func InitBus(destination string, c *Clarissa) *Bus {
+	a := Bus{
 		&godes.Runner{},
 		c,
-		name,
 		destination,
 		createPeople(),
 		random_time.Get(30, 33, 40),

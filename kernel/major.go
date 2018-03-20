@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import "github.com/agoussia/godes"
 

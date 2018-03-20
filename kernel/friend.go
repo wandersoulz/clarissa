@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"github.com/icrowley/fake"
@@ -27,11 +27,11 @@ func CreateFriend() Friend {
 }
 
 func createPreferences() []Major {
-	cs := NewMajor("Computer Science", comp_sci.Get(-10, 10))
-	m := NewMajor("Marketing", market.Get(-10, 10))
-	a := NewMajor("Astrophysics", astro.Get(-10, 10))
-	va := NewMajor("Visual Arts", vis_art.Get(-10, 10))
-	bio := NewMajor("Biology", biology.Get(-10, 10))
+	cs := NewMajor("Computer Science", comp_sci.Get(-20, 20))
+	m := NewMajor("Marketing", market.Get(-20, 20))
+	a := NewMajor("Astrophysics", astro.Get(-20, 20))
+	va := NewMajor("Visual Arts", vis_art.Get(-20, 20))
+	bio := NewMajor("Biology", biology.Get(-20, 20))
 
 	return []Major{cs, m, a, va, bio}
 }

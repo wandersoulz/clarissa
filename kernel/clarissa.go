@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"encoding/csv"
@@ -41,11 +41,13 @@ func (c *Clarissa) Run() {
 	}
 	// Clarissa is awake and is at home and ready to go
 	// She gets on the bus
-	godes.AddRunner(InitArea("Bus", "School", c))
+	godes.AddRunner(InitBus("School", c))
 }
 
 // Init - Initialize Clarissa!
 func Init() *Clarissa {
+	InitKernel()
+
 	majorFile, _ := os.Create("result_major.csv")
 	influenceFile, _ := os.Create("result.csv")
 	majorCsvLog = csv.NewWriter(majorFile)
@@ -84,7 +86,7 @@ func (c Clarissa) MakeFriend(friend *Friend) (*godes.PriorityItem, bool) {
 		}
 		c.friends.Push(friendItem)
 	} else {
-		newPriority := friendItem.Priority * scalarDist.Get(1.0003, 0.01)
+		newPriority := friendItem.Priority * scalarDist.Get(1.003, 0.0001)
 		c.friends.Update(friendItem, newPriority)
 	}
 	return friendItem, isNew

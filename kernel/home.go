@@ -1,4 +1,4 @@
-package clarissa
+package kernel
 
 import (
 	"fmt"
