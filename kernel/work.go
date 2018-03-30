@@ -17,22 +17,27 @@ var work *Work
 
 func (w *Work) Run() {
 	for godes.GetHour() < w.workEnd {
-		encounter := random_encounter.Get(1, 10)
-		if encounter < 4 {
-			personIndex := int(people_index_dist.Get(0, float64(len(w.people))))
+		encounterProb := randomEncounter.Get(1, 10)
+		if encounterProb < 6 {
+			personIndex := int(peopleIndexDist.Get(0, float64(len(w.people))))
 			person := w.people[personIndex]
 
 			friend, isNew := w.c.MakeFriend(&person)
 			if isNew {
-				fmt.Printf("Clarissa met %s while at work\n", person.name)
+				fmt.Printf("Clarissa met %s while at work\n", person.Name)
 			} else {
-				fmt.Printf("Clarissa talked to %s at work\n", person.name)
+				fmt.Printf("Clarissa talked to %s at work\n", person.Name)
 			}
-			w.c.GetInfluence(friend)
+			maxLength := 40.0
+			lengthOfConversation := randomTime.Get(5, 15, maxLength)
+			w.c.GetInfluence(friend, lengthOfConversation/maxLength)
 
-			lengthOfConversation := random_time.Get(1, 15, 40)
 			godes.Advance(lengthOfConversation)
 
+		} else {
+			maxLength := 100.0
+			lengthOfConversation := randomTime.Get(20, 35, maxLength)
+			godes.Advance(lengthOfConversation)
 		}
 	}
 	godes.AddRunner(InitBus("Home", w.c))

@@ -7,18 +7,6 @@ import (
 	"github.com/wandersoulz/godes"
 )
 
-var people_index_dist *godes.UniformDistr
-var num_people_dist *godes.TriangularDistr
-var random_encounter *godes.UniformDistr
-var random_time *godes.TriangularDistr
-
-func InitBusDists() {
-	people_index_dist = godes.NewUniformDistr(true)
-	num_people_dist = godes.NewTriangularDistr(true)
-	random_encounter = godes.NewUniformDistr(true)
-	random_time = godes.NewTriangularDistr(true)
-}
-
 // Area - place for Clarissa to interact with people
 type Bus struct {
 	*godes.Runner
@@ -28,22 +16,29 @@ type Bus struct {
 	timeOnBus   float64
 }
 
+type BusDetails struct {
+	PeopleOnBus []Friend
+	Destination string
+	Clar        *Clarissa
+}
+
 func (b *Bus) Run() {
 	// Get a random encounter
-	encounter := random_encounter.Get(0, 10)
-	fmt.Printf("Clarissa is on the bus on her way to %s\n", b.destination)
-	if encounter < 5 {
+	encounterProb := randomEncounter.Get(0, 10)
+	//fmt.Printf("Clarissa is on the bus on her way to %s\n", b.destination)
+	if encounterProb < 3 {
 		// we have an encounter
-		personIndex := int(people_index_dist.Get(0, float64(len(b.people))))
+		personIndex := int(peopleIndexDist.Get(0, float64(len(b.people))))
 		person := b.people[personIndex]
 
 		friend, isNew := b.c.MakeFriend(&person)
 		if isNew {
-			fmt.Printf("Clarissa met %s while on the bus\n", person.name)
+			fmt.Printf("Clarissa met %s while on the bus\n", person.Name)
 		} else {
-			fmt.Printf("Clarissa talked to %s on the bus\n", person.name)
+			fmt.Printf("Clarissa talked to %s on the bus\n", person.Name)
 		}
-		b.c.GetInfluence(friend)
+		lengthOfConversation := randomTime.Get(10, 15, b.timeOnBus)
+		b.c.GetInfluence(friend, lengthOfConversation/b.timeOnBus)
 	}
 
 	godes.Advance(b.timeOnBus)
@@ -67,14 +62,14 @@ func InitBus(destination string, c *Clarissa) *Bus {
 		c,
 		destination,
 		createPeople(),
-		random_time.Get(30, 33, 40),
+		randomTime.Get(30, 33, 40),
 	}
 
 	return &a
 }
 
 func createPeople() []Friend {
-	numPeople := int(math.Floor(num_people_dist.Get(1, 4, 10)))
+	numPeople := int(math.Floor(numPeopleDist.Get(4, 10, 15)))
 	friends := make([]Friend, numPeople)
 	for i := 0; i < numPeople; i++ {
 		friends[i] = CreateFriend()

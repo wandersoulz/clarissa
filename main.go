@@ -9,19 +9,22 @@ import (
 )
 
 func main() {
-	seed, _ := strconv.ParseInt(os.Args[1], 10, 64)
-	godes.SetSeed(seed)
+	numSeeds, _ := strconv.ParseInt(os.Args[1], 10, 64)
+	momFriendship, _ := strconv.ParseFloat(os.Args[2], 64)
 
+	seed := numSeeds
+	godes.SetSeed(seed)
 	// CLARISSA SPECIFIC CODE
 
 	godes.Run()
 
 	// CLARISSA SPECIFIC CODE
-	c := kernel.Init()
-	c.ReportCurrentMajor()
+	k := kernel.Init(seed, momFriendship)
+	k.ReportCurrentMajor()
 
-	godes.AddRunner(c)
+	godes.AddRunner(kernel.InitDay(k))
 	godes.WaitUntilDone() // waits for all the runners to finish the Run()
 
-	c.ReportCurrentMajor()
+	k.ReportCurrentMajor()
+	godes.Clear()
 }
